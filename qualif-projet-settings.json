@@ -1,0 +1,86 @@
+{
+    "application": {
+        "name": "link-innov-front"
+    },
+    "jenkins": {
+        "users_to_notify": "",
+        "node": "slave",
+        "build": {
+            "compile": {
+                "docker": {
+                    "image": "node:8-stretch"
+                }
+            },
+            "containerize": {
+                "docker": {
+                    "dockerfile_path": "./build_scripts/Dockerfile"
+                }
+            }
+        },
+        "publish": {
+            "checkout": {
+                "credentialsId": "jenkins"
+            },
+            "docker": {
+                "scm": "https://svn.arkeup.com/com.arkeup.docker/branches/cloudsdk-maven-java8-docker-svn",
+                "image": "cloudsdk-maven-java8-docker"
+            },
+            "gcp": {
+                "project": "linkinnov-221611",
+                "credentialsId": "file-linkinnov-221611-1b9d82fcb573.json",
+                "compute_service_account": "298882591464-compute@developer.gserviceaccount.com",
+                "container_registry": {
+                    "location": "eu.gcr.io"
+                }
+            }
+        },
+        "deploy": {
+            "checkout": {
+                "credentialsId": "jenkins"
+            },
+            "docker": {
+                "image": "google/cloud-sdk:latest"
+            },
+            "envs": {
+                "default": "dev",
+                "available": "dev\nqualif\npreprod\nprod"
+            },
+            "gcp": {
+                "project": "linkinnov-221611",
+                "credentialsId": "file-linkinnov-221611-1b9d82fcb573.json",
+                "compute_service_account": "298882591464-compute@developer.gserviceaccount.com",
+                "container_registry": {
+                    "location": "eu.gcr.io"
+                },
+                "kubernetes": {
+                    "manifests": {
+                        "scm": "https://svn.arkeup.com/com.link-innov.platform/trunk/"
+                    },
+                    "name": "linkinnov",
+                    "zone": "europe-west1-b",
+                    "services": {
+                        "front_lb": {
+                            "eip_address_name": "ip-linkinnov-qualif-1"
+                        }
+                    }
+                }
+            }
+        },
+        "makeRelease": {
+            "scm": {
+                "credentialsId": "jenkins"
+            },
+            "docker": {
+                "image": "aneesv/svn-client"
+            }
+        },
+        "makePush2Env": {
+            "scm": {
+                "credentialsId": "jenkins"
+            },
+            "docker": {
+                "image": "aneesv/svn-client"
+            }
+        }
+    }
+}
