@@ -60,7 +60,7 @@
                     "zone": "europe-west1-b",
                     "services": {
                         "front_lb": {
-                            "eip_address_name": "ip-linkinnov-dev-1"
+                            "eip_address_name": "ip-linkinnov-qualif-1"
                         }
                     }
                 }
